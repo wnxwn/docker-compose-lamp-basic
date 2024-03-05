@@ -12,10 +12,10 @@
             <div class="hero-body">
                 <div class="container has-text-centered">
                     <h1 class="title">
-                        LAMP STACK
+                        SIMPLE LAMP STACK
                     </h1>
                     <h2 class="subtitle">
-                        Your local development environment
+                        Your local development environment for CTEC2712
                     </h2>
                 </div>
             </div>
@@ -37,21 +37,13 @@
                                     // Check connection
                                     if ($link->connect_error) {
                                         die("Connection failed: " . $link->connect_error);
+                                    } else {
+                                        $result = $link->query("SELECT VERSION() AS version");
+                                        $row = $result->fetch_assoc();
+                                        echo "MariaDB Database Version: " . $row['version']; 
                                     }
-                                    echo "Connected successfully";
-                                    
-                                    //$link = mysqli_connect("database", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
-
-                                    /* check connection */
-                                    //if (mysqli_connect_errno()) {
-                                    //    printf("MySQL connecttion failed: %s", mysqli_connect_error());
-                                    //} else {
-                                    //    /* print server version */
-                                    //    printf("MySQL Server %s", mysqli_get_server_info($link));
-                                    //}
                                     /* close connection */
                                     $link->close();
-                                    //mysqli_close($link);
                                     ?>
                                 </li>
                             </ul>
@@ -75,8 +67,9 @@
         <footer class="footer">
             <div class="content has-text-centered">
                 <p>
-                    <strong><a href="https://www.sprintcube.com" target="_blank">SprintCube</a></strong><br>
-                    The source code is released under the <a href="https://github.com/sprintcube/docker-compose-lamp/blob/master/LICENSE" target="_blank">MIT license</a>.
+                    <strong><a href="https://github.com/wnxwn/docker-compose-lamp-basic">Modified by wnxwn (one by one)</a></strong><br>
+                    <strong><a href="https://www.sprintcube.com" target="_blank">Originally by SprintCube</a></strong><br>
+                    The source code is released under the <a href="https://github.com/wnxwn/docker-compose-lamp-basic/blob/master/LICENSE" target="_blank">MIT license</a>.
                 </p>
             </div>
         </footer>
