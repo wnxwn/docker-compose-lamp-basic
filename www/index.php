@@ -32,17 +32,26 @@
                                 <li>PHP <?= phpversion(); ?></li>
                                 <li>
                                     <?php
-                                    $link = mysqli_connect("database", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
+                                    $link = new mysqli("database", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
 
-/* check connection */
-                                    if (mysqli_connect_errno()) {
-                                        printf("MySQL connecttion failed: %s", mysqli_connect_error());
-                                    } else {
-                                        /* print server version */
-                                        printf("MySQL Server %s", mysqli_get_server_info($link));
+                                    // Check connection
+                                    if ($link->connect_error) {
+                                        die("Connection failed: " . $link->connect_error);
                                     }
+                                    echo "Connected successfully";
+                                    
+                                    //$link = mysqli_connect("database", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
+
+                                    /* check connection */
+                                    //if (mysqli_connect_errno()) {
+                                    //    printf("MySQL connecttion failed: %s", mysqli_connect_error());
+                                    //} else {
+                                    //    /* print server version */
+                                    //    printf("MySQL Server %s", mysqli_get_server_info($link));
+                                    //}
                                     /* close connection */
-                                    mysqli_close($link);
+                                    $link->close();
+                                    //mysqli_close($link);
                                     ?>
                                 </li>
                             </ul>
