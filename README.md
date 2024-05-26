@@ -1,6 +1,13 @@
 # LAMP stack built with Docker Compose
 
-![Landing Page](https://user-images.githubusercontent.com/43859895/141092846-905eae39-0169-4fd7-911f-9ff32c48b7e8.png)
+*Note: This is a fork of [sprintcube/docker-compose-lamp](https://github.com/sprintcube/docker-compose-lamp),
+which is maintained by [@sprintcube](https://github.com/sprintcube). 
+I made changes to the setup for De Montfort University's 
+CTEC2712 students who prefer to work on their macOS computers.
+This is what I used to work throughout the module.
+However, I assume that by using this setup you are familiar with Docker (Compose),
+and that you are willing to make fine adjustments to suit your needs.
+I WILL NOT TAKE ANY RESPONSIBILITY FOR ANY DAMAGE TO YOUR PROJECT OR COMPUTER.*
 
 A basic LAMP stack environment built using Docker Compose. It consists of the following:
 
@@ -8,26 +15,12 @@ A basic LAMP stack environment built using Docker Compose. It consists of the fo
 - Apache
 - MySQL
 - phpMyAdmin
-- Redis
-
-As of now, we have several different PHP versions. Use appropriate php version as needed:
-
-- 5.4.x
-- 5.6.x
-- 7.1.x
-- 7.2.x
-- 7.3.x
-- 7.4.x
-- 8.0.x
-- 8.1.x
-- 8.2.x
-- 8.3.x
 
 ## Installation
 
 - Clone this repository on your local computer
-- configure .env as needed
-- Run the `docker compose up -d`.
+- configure .env as needed (copy `sample.env` as `.env` and modify as needed)
+- Run `docker compose up -d` (add `--build` as needed).
 
 ```shell
 git clone https://github.com/sprintcube/docker-compose-lamp.git
@@ -97,9 +90,6 @@ This will be used to store Apache logs. The default value for this is `./logs/ap
 
 ---
 
-> For Apple Silicon Users:
-> Please select Mariadb as Database. Oracle doesn't build their SQL Containers for the arm Architecture
-
 _**DATABASE**_
 
 Define which MySQL or MariaDB Version you would like to use.
@@ -129,7 +119,6 @@ By default following modules are enabled.
 - rewrite
 - headers
 
-> If you want to enable more modules, just update `./bin/phpX/Dockerfile`. You can also generate a PR and we will merge if seems good for general purpose.
 > You have to rebuild the docker image by running `docker compose build` and restart the docker containers.
 
 #### Connect via SSH
@@ -137,7 +126,7 @@ By default following modules are enabled.
 You can connect to web server using `docker compose exec` command to perform various operation on it. Use below command to login to container via ssh.
 
 ```shell
-docker compose exec webserver bash
+docker compose exec [name of your webserver container] bash
 ```
 
 ## PHP
@@ -149,7 +138,6 @@ The installed version of php depends on your `.env`file.
 By default following extensions are installed.
 May differ for PHP Versions <7.x.x
 
-- mysqli
 - pdo_sqlite
 - pdo_mysql
 - mbstring
@@ -163,7 +151,7 @@ May differ for PHP Versions <7.x.x
 - xmlrpc
 - gd
 
-> If you want to install more extension, just update `./bin/webserver/Dockerfile`. You can also generate a PR and we will merge if it seems good for general purpose.
+> If you want to install more extensions, add them via `additional.dockerfile`.
 > You have to rebuild the docker image by running `docker compose build` and restart the docker containers.
 
 ## phpMyAdmin
@@ -233,53 +221,11 @@ Now, make a breakpoint and run debug.
 
 **Tip!** After theses configurations, you may need to restart container.
 
-## Redis
-
-It comes with Redis. It runs on default port `6379`.
-
-## SSL (HTTPS)
-
-Support for `https` domains is built-in but disabled by default. There are 3 ways you can enable and configure SSL; `https` on `localhost` being the easiest. If you are trying to recreating a testing environment as close as possible to a production environment, any domain name can be supported with more configuration.
-
-**Notice:** For every non-localhost domain name you wish to use `https` on, you will need to modify your computers [hosts file](https://en.wikipedia.org/wiki/Hosts_%28file%29) and point the domain name to `127.0.0.1`. If you fail to do this SSL will not work and you will be routed to the internet every time you try to visit that domain name locally.
-
-### 1) HTTPS on Localhost
-
-To enable `https` on `localhost` (https://localhost) you will need to:
-
-1. Use a tool like [mkcert](https://github.com/FiloSottile/mkcert#installation) to create an SSL certificate for `localhost`:
-   - With `mkcert`, in the terminal run `mkcert localhost 127.0.0.1 ::1`.
-   - Rename the files that were generated `cert.pem` and `cert-key.pem` respectively.
-   - Move these files into your docker setup by placing them in `config/ssl` directory.
-2. Uncomment the `443` vhost in `config/vhosts/default.conf`.
-
-Done. Now any time you turn on your LAMP container `https` will work on `localhost`.
-
-### 2) HTTPS on many Domains with a Single Certificate
-
-If you would like to use normal domain names for local testing, and need `https` support, the simplest solution is an SSL certificate that covers all the domain names:
-
-1. Use a tool like [mkcert](https://github.com/FiloSottile/mkcert#installation) to create an SSL certificate that covers all the domain names you want:
-   - With `mkcert`, in the terminal run `mkcert example.com "*.example.org" myapp.dev localhost 127.0.0.1 ::1` where you replace all the domain names and IP addresses to the ones you wish to support.
-   - Rename the files that were generated `cert.pem` and `cert-key.pem` respectively.
-   - Move these files into your docker setup by placing them in `config/ssl` directory.
-2. Uncomment the `443` vhost in `config/vhosts/default.conf`.
-
-Done. Since you combined all the domain names into a single certificate, the vhost file will support your setup without needing to modify it further. You could add domain specific rules if you wish however. Now any time you turn on your LAMP container `https` will work on all the domains you specified.
-
-### 3) HTTPS on many Domain with Multiple Certificates
-
-If you would like your local testing environment to exactly match your production, and need `https` support, you could create an SSL certificate for every domain you wish to support:
-
-1. Use a tool like [mkcert](https://github.com/FiloSottile/mkcert#installation) to create an SSL certificate that covers the domain name you want:
-   - With `mkcert`, in the terminal run `mkcert [your-domain-name(s)-here]` replacing the bracket part with your domain name.
-   - Rename the files that were generated to something unique like `[name]-cert.pem` and `[name]-cert-key.pem` replacing the bracket part with a unique name.
-   - Move these files into your docker setup by placing them in `config/ssl` directory.
-2. Using the `443` example from the vhost file (`config/vhosts/default.conf`), make new rules that match your domain name and certificate file names.
-
-Done. The LAMP container will auto pull in any SSL certificates in `config/ssl` when it starts. As long as you configure the vhosts file correctly and place the SSL certificates in `config/ssl`, any time you turn on your LAMP container `https` will work on your specified domains.
-
 ## Contributing
+
+**If you want to contribute, you should probably consider contributing to the
+main project rather than this one... unless if the proposed changes are for
+this repo specifically.**
 
 We are happy if you want to create a pull request or help people with their issues. If you want to create a PR, please remember that this stack is not built for production usage, and changes should be good for general purpose and not overspecialized.
 
@@ -287,10 +233,7 @@ We are happy if you want to create a pull request or help people with their issu
 >
 > Thank you!
 
-## Why you shouldn't use this stack unmodified in production
+## IMPORTANT: Why you shouldn't use this stack unmodified in production
 
 We want to empower developers to quickly create creative Applications. Therefore we are providing an easy to set up a local development environment for several different Frameworks and PHP Versions.
-In Production you should modify at a minimum the following subjects:
 
-- php handler: mod_php=> php-fpm
-- secure mysql users with proper source IP limitations
