@@ -1,4 +1,4 @@
-# LAMP stack built with Docker Compose
+# LAMP Stack for CTEC2712 @ DMU
 
 *Note: This is a fork of [sprintcube/docker-compose-lamp](https://github.com/sprintcube/docker-compose-lamp),
 which is maintained by [@sprintcube](https://github.com/sprintcube). 
