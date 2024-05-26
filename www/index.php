@@ -32,18 +32,14 @@
                                 <li>PHP <?= phpversion(); ?></li>
                                 <li>
                                     <?php
-                                    $link = new mysqli("database", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
+                                    $link = new PDO("mysql:host=database:3306", "root", $_ENV['MYSQL_ROOT_PASSWORD'], null);
 
                                     // Check connection
-                                    if ($link->connect_error) {
-                                        die("Connection failed: " . $link->connect_error);
-                                    } else {
-                                        $result = $link->query("SELECT VERSION() AS version");
-                                        $row = $result->fetch_assoc();
-                                        echo "MariaDB Database Version: " . $row['version']; 
-                                    }
+                                    $result = $link->query("SELECT VERSION() AS version");
+                                    $row = $result->fetch(PDO::FETCH_ASSOC);
+                                    echo "MariaDB Database Version: " . $row['version']; 
                                     /* close connection */
-                                    $link->close();
+                                    $link = null;
                                     ?>
                                 </li>
                             </ul>
@@ -55,9 +51,10 @@
                         <div class="content">
                             <ul>
                                 <li><a href="/phpinfo.php">phpinfo()</a></li>
-                                <li><a href="http://localhost:<? print $_ENV['PMA_PORT']; ?>">phpMyAdmin</a></li>
-                                <li><a href="/test_db.php">Test DB Connection with mysqli</a></li>
                                 <li><a href="/test_db_pdo.php">Test DB Connection with PDO</a></li>
+                                <li><a href="/xdebugInfo.php">xdebug_info()</a></li>
+                                <li><a href="http://localhost:8080">phpMyAdmin</a></li>
+                                <li><a href="/ctec2712">CTEC2712 Folder</a>
                             </ul>
                         </div>
                     </div>

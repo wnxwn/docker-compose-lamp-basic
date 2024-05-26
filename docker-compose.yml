@@ -6,7 +6,7 @@ services:
     container_name: "${COMPOSE_PROJECT_NAME}-php83-apache"
     build:
       context: .
-      dockerfile: mariadb.dockerfile
+      dockerfile: additional.dockerfile
     restart: "always"
     ports:
       - "${HOST_MACHINE_UNSECURE_HOST_PORT}:80"
@@ -15,6 +15,7 @@ services:
       - database
     volumes:
       - ${DOCUMENT_ROOT-./www}:/var/www/html:rw
+      - ./includes:/var/includes:rw
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${SSL_DIR-./config/ssl}:/etc/apache2/ssl/
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
@@ -41,6 +42,7 @@ services:
       - ${MYSQL_INITDB_DIR-./config/initdb}:/docker-entrypoint-initdb.d
       - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
       - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+      - ./sql_scripts:/var/sql_scripts:rw
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
